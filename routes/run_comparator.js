@@ -9,7 +9,13 @@ const fs = require('fs');
 /* post /compare */
 router.post('/', (req, res, next) => {
   console.log(req.headers["content-type"]);
-  res.send(req.body);
+
+  if (req.headers["content-type"] === 'application/json') {
+    res.send(req.body);
+  } else {
+
+  }
+
 
 });
 
