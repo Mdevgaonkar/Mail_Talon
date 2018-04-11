@@ -1,0 +1,20 @@
+{% extends 'layout.html' %}
+{% block body %}
+<h2>Inbox</h2>
+<table class="table">
+  <thead class="thead-light">
+    <th scope="col">From</th>
+    <th scope="col">Subject</th>
+    <th scope="col">Received</th>
+  </thead>
+  <tbody>
+    {% for message in messages %}
+      <tr class="{% if not message.isRead %}table-primary{% endif %}">
+        <td title="{{message.from.emailAddress.address}}">{{message.from.emailAddress.name}}</td>
+        <td>{{message.subject}}</td>
+        <td>{{message.receivedDateTime}}</td>
+      </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
