@@ -16,10 +16,13 @@ router.get('/', async function(req, res, next) {
 
     // Initialize Graph client
     const client = graph.Client.init({
-      authProvider: (done) => {
-        done(null, accessToken);
+      debugLogging: true,
+      authProvider: function (did) {
+        did(null, accessToken);
       }
     });
+    console.log(client);
+    
 
     try {
       // Get the 10 newest messages from inbox
@@ -30,6 +33,9 @@ router.get('/', async function(req, res, next) {
       // .filter('isRead eq false') //
       // .orderby('receivedDateTime DESC')
       .get();
+
+      // console.log(result);
+      
 
       parms.messages = result.value;
       res.render('mail', parms);
