@@ -10,6 +10,7 @@ require('dotenv').config();
 var index = require('./routes/index');
 var authorize = require('./routes/authorize');
 var mail = require('./routes/mail');
+var run_comp = require('./routes/run_comparator');
 const nunjucks = require('nunjucks');
 
 var app = express();
@@ -35,6 +36,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/authorize', authorize);
 app.use('/mail', mail);
+app.use('/getNewMails', run_comp);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
