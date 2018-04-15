@@ -1,0 +1,6 @@
+{
+    "rule_name":"test1",
+    "from":"dmayur57@outlook.com",
+    "output_file":"test1_results.json",
+    "output_data":"count"
+}

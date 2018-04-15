@@ -1,0 +1,10 @@
+[
+    {
+        "rule_name":"test1",
+        "filename":"test1.json"
+    },
+    {
+        "rule_name":"test2",
+        "filename":"test2.json"
+    }
+]
