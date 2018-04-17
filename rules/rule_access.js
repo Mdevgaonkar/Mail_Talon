@@ -20,6 +20,16 @@ function getAllRules(){
     });
 }
 
+function applyRules(messages,done){
+    messages.forEach(messages => {
+        //loop over all rules and compare key params
+        rules.forEach(rule => {
+            //compare all keys
+        });
+    }); 
+}
+exports.applyRules = applyRules;
+
 
 
 
