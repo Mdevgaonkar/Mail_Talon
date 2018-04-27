@@ -1,3 +1,4 @@
 /readme-images/*
 .env
 /node_modules/*
+/research/
