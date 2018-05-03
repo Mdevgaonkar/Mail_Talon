@@ -2,5 +2,9 @@
     "rule_name":"test1",
     "from":"arulnadhan@gmail.com",
     "output_file":"test2_results.json",
+    "subject":{
+        "text":"RE: FAILURE MAIL",
+        "condition":"like"
+    },
     "output_data":"count"
 }
