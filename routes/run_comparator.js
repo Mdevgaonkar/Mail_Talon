@@ -4,6 +4,7 @@ var authHelper = require('../helpers/auth');
 
 const request = require('request');
 const rule_access = require('../rules/rule_access');
+const lastMailTime = require('../rules/lastmail.json');
 
 /* GET /mail */
 router.get('/', async function (req, res, next) {
@@ -16,7 +17,7 @@ router.get('/', async function (req, res, next) {
 
   if (accessToken && userName) {
     parms.user = userName;
-    var getMailsURL = encodeURI('https://graph.microsoft.com/v1.0/me/mailfolders/inbox/messages?$select=subject,from,receivedDateTime,isRead&$filter=isRead eq false&$orderby=receivedDateTime DESC');
+    var getMailsURL = encodeURI('https://graph.microsoft.com/v1.0/me/mailfolders/inbox/messages?$select=subject,from,receivedDateTime,isRead&$filter=isRead eq false and receivedDateTime gt ' + lastMailTime.latestreceivedDateTime + '&$orderby=receivedDateTime DESC');
     // console.log(getMailsURL);
 
     request
@@ -29,8 +30,8 @@ router.get('/', async function (req, res, next) {
         //err-> if error occurs then will have some prop
         //result-> provides raw result along with request
         //body-> provide actual required info
-         console.log('statusCode:', results && results.statusCode);
-        //  console.log('Body:', body);
+        console.log('statusCode:', results && results.statusCode);
+        // console.log('Body:', body);
         if (err) {
           parms.message = 'Error retrieving messages';
           parms.error = {
@@ -39,10 +40,12 @@ router.get('/', async function (req, res, next) {
           parms.debug = JSON.stringify(err.body, null, 2);
           res.send(parms);
         } else {
+          // console.log('Here you go');
+          // parms.result = JSON.parse(body).value;
           rule_access.applyRules(JSON.parse(body).value,(err,rule_res)=>{
-            parms.result =rule_res.result;
-            // console.log(parms);
-            res.send(parms);
+          parms.result =rule_res.result;
+
+          res.send(parms);
           });
         }
       });
