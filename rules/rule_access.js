@@ -36,11 +36,28 @@ function getAllRules(){
     });
 }
 
+function saveLastMailTime(receivedDateTime){
+    console.log(receivedDateTime);
+    lastmail = JSON.stringify({
+        "latestreceivedDateTime":receivedDateTime
+    })
+    fs.writeFile(__dirname + '/lastMail.json', lastmail, function(err) {
+        if(err) {
+            return console.log(err);
+        }
+        console.log("The file was saved!");
+    }); 
+    
+}
+
 function applyRules(messages,done){
     var result={
         mail_count:0,
         match_count:0
     };
+
+    saveLastMailTime(messages[0].receivedDateTime);
+
     messages.forEach(message => {
         //loop over all rules and compare key params
         rules.forEach(rule => {
