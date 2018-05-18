@@ -4,20 +4,33 @@ var authHelper = require('../helpers/auth');
 
 const request = require('request');
 const rule_access = require('../rules/rule_access');
-const lastMailTime = require('../rules/lastmail.json');
+const fs = require('fs');
 
 /* GET /mail */
 router.get('/', async function (req, res, next) {
   let parms = {
     module: 'comparator',
+    auth: false
   };
 
   const accessToken = await authHelper.getAccessToken(req.cookies, res);
   const userName = req.cookies.graph_user_name;
 
   if (accessToken && userName) {
-    parms.user = userName;
-    var getMailsURL = encodeURI('https://graph.microsoft.com/v1.0/me/mailfolders/inbox/messages?$select=subject,from,receivedDateTime,isRead&$filter=isRead eq false and receivedDateTime gt ' + lastMailTime.latestreceivedDateTime + '&$orderby=receivedDateTime DESC');
+    // parms.user = userName;
+    parms.auth = true;
+
+    var lastMailTime;
+    fs.readFile(__dirname + '/../rules/lastmail.json', 'utf8', (err, data) => {
+      if (err) throw err;
+      lastMailTime = data;
+    });
+    if (lastMailTime != null) {
+      var getMailsURL = encodeURI('https://graph.microsoft.com/v1.0/me/mailfolders/inbox/messages?$select=subject,from,receivedDateTime,isRead&$filter=isRead eq false and receivedDateTime gt ' + lastMailTime.latestreceivedDateTime + '&$orderby=receivedDateTime DESC');
+    } else {
+      var getMailsURL = encodeURI('https://graph.microsoft.com/v1.0/me/mailfolders/inbox/messages?$select=subject,from,receivedDateTime,isRead&$filter=isRead eq false&$orderby=receivedDateTime DESC');
+    }
+
     // console.log(getMailsURL);
 
     request
@@ -42,10 +55,10 @@ router.get('/', async function (req, res, next) {
         } else {
           // console.log('Here you go');
           // parms.result = JSON.parse(body).value;
-          rule_access.applyRules(JSON.parse(body).value,(err,rule_res)=>{
-          parms.result =rule_res.result;
+          rule_access.applyRules(JSON.parse(body).value, (err, rule_res) => {
+            parms.result = rule_res.result;
 
-          res.send(parms);
+            res.send(parms);
           });
         }
       });
