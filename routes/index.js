@@ -3,25 +3,30 @@ var router = express.Router();
 var authHelper = require('../helpers/auth');
 
 /* GET home page. */
-router.get('/', async function(req, res, next) {
-  let parms = {};
+router.get('/', async function (req, res, next) {
+  let parms = {
+    auth: false
+  };
 
-  console.log(req.cookies);
-  
+  // console.log(req.cookies);
+
   const accessToken = await authHelper.getAccessToken(req.cookies, res);
   const userName = req.cookies.graph_user_name;
 
   if (accessToken && userName) {
+    parms.auth = true;
     parms.user = userName;
     parms.accessToken = accessToken;
+
     // parms.debug = `User: ${userName}\nAccess Token: ${accessToken}`;
   } else {
+    parms.auth = false;
     parms.signInUrl = authHelper.getAuthUrl();
     // parms.debug = parms.signInUrl;
   }
 
   res.setHeader('Content-Type', 'application/json');
-  console.log(res.cookies);
+  // console.log(res.cookies);
   res.send(parms);
 });
 
