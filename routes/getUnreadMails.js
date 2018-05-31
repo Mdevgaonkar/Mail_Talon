@@ -9,6 +9,7 @@ const lastTimestamp_Fl = __dirname + '/../rules/LastMailTime.json';
 
 /* GET /getUnreadMails */
 router.get('/', async function (req, res, next) {
+    res.setHeader('Content-Type', 'application/json');
     let parms = {
         module: 'getUnreadMails',
         auth: false,
@@ -17,13 +18,10 @@ router.get('/', async function (req, res, next) {
     };
 
     const accessToken = await authHelper.getAccessToken(req.cookies, res);
-
     if (accessToken) {
         // parms.user = userName;
         parms.auth = true;
         var getMailsURL = getUnreadMailsURL(req.cookies.lastChecked);
-
-
         request
             .get({
                 uri: getMailsURL, // proxy: process.env.proxyURL, 
@@ -53,9 +51,9 @@ router.get('/', async function (req, res, next) {
 
 const getUnreadMailsURL = (latestreceivedDateTime) => {
 
-    if (latestreceivedDateTime == null || latestreceivedDateTime == undefined) {
-        latestreceivedDateTime = fs.readFileSync(lastTimestamp_Fl, 'utf8');
-    }
+    // if (latestreceivedDateTime == null || latestreceivedDateTime == undefined) {
+    latestreceivedDateTime = fs.readFileSync(lastTimestamp_Fl, 'utf8');
+    // }
 
     if (latestreceivedDateTime != null) {
         return encodeURI('https://graph.microsoft.com/v1.0/me/messages?$count=true&$select=receivedDateTime,subject,isRead,from,ccRecipients,body,bodyPreview,uniqueBody,importance&$filter=isRead eq false and receivedDateTime gt ' + latestreceivedDateTime + '&$orderby=receivedDateTime DESC');
@@ -71,7 +69,11 @@ var responseBodyModel = {
 }
 
 const formatBody = (body) => {
-    const count = body["@odata.count"];
+    if (body != undefined && "@odata.count" in body) {
+        var count = body["@odata.count"];
+    } else {
+        count = null;
+    }
     responseBodyModel.count = count;
     responseBodyModel.messages = body.value.map((message) => {
         return formatedMessage = utils.formatMessage(message);
