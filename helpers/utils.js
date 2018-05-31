@@ -46,14 +46,20 @@ const handleResponse = (err, results, body, parms, done) => {
         body = JSON.parse(body);
     } catch (e) {
         console.log(e); // error in the above string (in this case, yes)!
+        parms.body = 'Request Failed';
+        parms.errors.push(formErrorObj(e, 'Error retrieving response'));
+        parms.debug.push({
+            detail: `${JSON.stringify(e.body)}`
+        });
+        return done(parms, body);
     }
 
-    console.log('statusCode:', results && results.statusCode);
-    console.log(parms);
+    // console.log('statusCode:', results && results.statusCode);
+    // console.log(parms);
 
     if (err) {
         parms.body = 'Request Failed';
-        parms.errors.push(formErrorObj(err, 'Error retrieving messages'));
+        parms.errors.push(formErrorObj(err, 'Error retrieving response'));
         parms.debug.push({
             detail: `${JSON.stringify(err.body)}`
         });
