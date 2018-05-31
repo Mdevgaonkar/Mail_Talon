@@ -13,7 +13,7 @@ var authorize = require('./routes/authorize');
 // var mail = require('./routes/mail');
 var run_comp = require('./routes/run_comparator');
 var getUnreadMails = require('./routes/getUnreadMails');
-
+var piexpo = require('./routes/pi_expo');
 
 var app = express();
 
@@ -32,6 +32,7 @@ app.use('/authorize', authorize);
 // app.use('/mail', mail);
 app.use('/compare', run_comp);
 app.use('/getUnreadMails', getUnreadMails);
+app.use('/piexpo', piexpo);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
