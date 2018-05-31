@@ -1,0 +1,15 @@
+{
+  "rule_name": "test1",
+  "from": [
+    "Mayur.Devgaonkar@genworth.com",
+    "Akshay.Ghatage@genworth.com",
+    "krishant.mahidharia@genworth.com",
+    "dmayur57@outlook.com"
+  ],
+  "body": {
+    "text": "^(Taken care)",
+    "condition": "match"
+  },
+  "output_file": "",
+  "output_data": "match"
+}
