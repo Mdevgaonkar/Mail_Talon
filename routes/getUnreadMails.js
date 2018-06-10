@@ -26,7 +26,7 @@ router.get('/', async function (req, res, next) {
 
         request
             .get({
-                uri: getMailsURL, // proxy:'http://proxy.server.com', 
+                uri: getMailsURL, // proxy: process.env.proxyURL, 
                 headers: {
                     'Authorization': 'Bearer ' + accessToken
                 }
