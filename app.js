@@ -30,7 +30,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', index);
 app.use('/authorize', authorize);
 // app.use('/mail', mail);
-app.use('/refresh', run_comp);
+app.use('/compare', run_comp);
 app.use('/getUnreadMails', getUnreadMails);
 
 // catch 404 and forward to error handler
