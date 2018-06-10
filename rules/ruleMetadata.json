@@ -1,0 +1,63 @@
+{
+    "rule_name": {
+        "type": "string",
+        "description": "name of the rule"
+    },
+    "from": {
+        "type": "object",
+        "description": "array of email id strings of senders"
+    },
+    "subject": {
+        "type": "object",
+        "description": "Used to put filter condition based on subject",
+        "props": {
+            "text": {
+                "type": "string",
+                "description": "text to be found in subject based on condition prop"
+            },
+            "condition": {
+                "type": "string",
+                "description": "specifies rule condition",
+                "possible_values": [{
+                    "value": "equals",
+                    "description": "finds exact matches for specified text"
+                }, {
+                    "value": "includes",
+                    "description": "finds matches that include/contain specified text"
+                }, {
+                    "value": "match",
+                    "description": "finds matches for specified regexp"
+                }]
+            }
+        }
+
+    },
+    "body":{
+        "type":"object",
+        "description": "Used to put filter condition based on content of body",
+        "props":{
+            "text":{
+                "type":"string"
+            },
+            "condition":{
+                "type": "string",
+                "description": "specifies rule condition",
+                "possible_values": [{
+                    "value": "equals",
+                    "description": "finds exact matches for specified text"
+                }, {
+                    "value": "includes",
+                    "description": "finds matches that include/contain specified text"
+                }, {
+                    "value": "match",
+                    "description": "finds matches for specified regexp"
+                }]
+            }
+        }
+    },
+    "condition":{
+        "type":"string",
+        "description":"used to state relation between rule conditions",
+        "example":"(from && subject) || body"
+    }
+}
