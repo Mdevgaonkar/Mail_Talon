@@ -1,5 +1,5 @@
 const fs = require('fs');
-const saveMailProps = require('./saveMailProps');
+const saveMailProps = require('../helpers/lastMailProps');
 
 var ruleList;
 var rules = [];
