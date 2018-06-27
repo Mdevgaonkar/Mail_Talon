@@ -63,7 +63,10 @@ const handleResponse = (err, results, body, parms, done) => {
     return done(parms, body);
   } else {
     try {
-      body = JSON.parse(body);
+      if(typeof(body) !='object' ){
+        body = JSON.parse(body);
+      }
+      
     } catch (e) {
       console.log(body);
       console.log(e); // error in the above string (in this case, yes)!
@@ -76,9 +79,9 @@ const handleResponse = (err, results, body, parms, done) => {
     }
     if ("error" in body) {
       parms.body = "Request Failed";
-      parms.errors.push(formErrorObj(body.error, "Error retrieving messages"));
+      parms.errors.push(formErrorObj(body.error, "Error retrieving response"));
       parms.debug.push({
-        detail: body.error.innerError
+        detail: `${JSON.stringify(body.error.innerError)}`
       });
       return done(parms, body);
     } else {
