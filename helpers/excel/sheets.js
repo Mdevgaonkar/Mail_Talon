@@ -50,7 +50,7 @@ function createNewSheet(accessToken, excel_drive_item_id, sheetName) {
           Authorization: "Bearer " + accessToken,
           "Content-Type": "application/json"
         },
-        body: {
+        json: {
           name: sheetName
         }
       },
@@ -62,6 +62,49 @@ function createNewSheet(accessToken, excel_drive_item_id, sheetName) {
             }
           } else {
             parms.body = false;
+            parms.errors.push(utils.error(body,'could not create new sheet'));
+          }
+          resolve(parms);
+        });
+      }
+    );
+  });
+}
+
+function createNewTable(
+  accessToken,
+  excel_drive_item_id,
+  sheetName,
+  tableName,
+  address
+) {
+  let parms = {
+    module: "create_new_table",
+    errors: [],
+    debug: []
+  };
+
+  return new Promise(resolve => {
+    request.post(
+      {
+        uri: `https://graph.microsoft.com/v1.0/me/drive/items/${excel_drive_item_id}/workbook/tables/add`,
+        proxy: process.env.proxyURL,
+        headers: {
+          Authorization: "Bearer " + accessToken,
+          "Content-Type": "application/json"
+        },
+        json: {
+          address: `${sheetName}!${address}`,
+          hasHeaders: true
+        }
+      },
+      (err, results, body) => {
+        utils.handleResponse(err, results, body, parms, (parms, body) => {
+          if (parms.body.indexOf("succeeded")) {
+            parms.body = true;
+          } else {
+            parms.body = false;
+            parms.errors.push(utils.error(body,'could not create new table'));
           }
           resolve(parms);
         });
@@ -72,3 +115,4 @@ function createNewSheet(accessToken, excel_drive_item_id, sheetName) {
 
 exports.getAllSheets = getAllSheets;
 exports.createNewSheet = createNewSheet;
+exports.createNewTable = createNewTable;
