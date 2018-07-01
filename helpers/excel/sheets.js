@@ -161,7 +161,7 @@ function renameTable(
   });
 }
 
-function createRows(accessToken, excel_drive_item_id, sheetName) {
+function createRows(accessToken, excel_drive_item_id, table_name, rowDataArray) {
   let parms = {
     module: "create_new_sheet",
     errors: [],
@@ -170,25 +170,25 @@ function createRows(accessToken, excel_drive_item_id, sheetName) {
 
   return new Promise(resolve => {
     request.post({
-        uri: `https://graph.microsoft.com/v1.0/me/drive/items/${excel_drive_item_id}/workbook/worksheets/add`,
+        uri: `https://graph.microsoft.com/v1.0/me/drive/items/${excel_drive_item_id}/tables/${table_name}/rows/add`,
         proxy: process.env.proxyURL,
         headers: {
           Authorization: "Bearer " + accessToken,
           "Content-Type": "application/json"
         },
         json: {
-          name: sheetName
+          values: rowDataArray
         }
       },
       (err, results, body) => {
         utils.handleResponse(err, results, body, parms, (parms, body) => {
           if (parms.body.indexOf("succeeded")) {
-            if (sheetName === body.name) {
+            if (body.values[0] === rowDataArray[0]) {
               parms.body = true;
             }
           } else {
             parms.body = false;
-            parms.errors.push(utils.error(body, "could not create new sheet"));
+            parms.errors.push(utils.error(body, "could not create new row on sheet"));
           }
           resolve(parms);
         });
