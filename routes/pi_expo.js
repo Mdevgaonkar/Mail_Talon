@@ -28,16 +28,18 @@ router.get("/", async (req, res, next) => {
     // parms.user = userName;
     parms.auth = true;
     parms.body.message = "Starting PI logger process";
+    let loggedPIs = await pi_logger.log_process(req);
+
   } else {
     // Redirect to home
     res.redirect("/");
   }
 
   res.send(parms);
-  setInterval(() => {
-    // pi_logger.log_process(req);
-    excel_utils.log_PI_to_excel(req);
-  }, 1000 * 20 * 1); //1000 * 60 * 2
+  // setInterval(() => {
+
+  // excel_utils.log_PI_to_excel(req);
+  // }, 1000 * 20 * 1); //1000 * 60 * 2
 });
 
 module.exports = router;

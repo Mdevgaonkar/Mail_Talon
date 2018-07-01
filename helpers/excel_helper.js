@@ -6,7 +6,7 @@ const utils = require("./utils");
 // const excel_drive_item_id = 'F084686CF62DAC50!106';
 const excel_drive_item_id = "01XW7VKJQ6IDEHA3BKCBBLH2RSYL74QING";
 
-async function log_PI_to_excel(req) {
+async function log_PI_to_excel(req, PI_rows) {
   console.log("excel logging started");
 
   let parms = {
@@ -40,55 +40,61 @@ async function log_PI_to_excel(req) {
     let address = "A1:L2";
 
     // if (sheets in sheet_list.body) {
-      if (sheet_list.body.sheets.indexOf(current_sheet_name) == -1) {
-        //create new sheet
-        console.log("making new sheet");
+    if (sheet_list.body.sheets.indexOf(current_sheet_name) == -1) {
+      //create new sheet
+      console.log("making new sheet");
 
-        let new_sheet = await sheets.createNewSheet(
+      let new_sheet = await sheets.createNewSheet(
+        accessToken,
+        excel_drive_item_id,
+        current_sheet_name
+      );
+      if (new_sheet.body) {
+        //create new table
+        console.log("making new table");
+
+        let new_table = await sheets.createNewTable(
           accessToken,
           excel_drive_item_id,
-          current_sheet_name
+          current_sheet_name,
+          current_table_name,
+          address
         );
-        if (new_sheet.body) {
-          //create new table
-          console.log("making new table");
-
-          let new_table = await sheets.createNewTable(
-            accessToken,
-            excel_drive_item_id,
-            current_sheet_name,
-            current_table_name,
-            address
-          );
-          if (new_table.body) {
-            console.log("new table created");
-          } else {
-            console.log(new_table);
-            parms.errors.push(
-              utils.error(new_table.errors, "create new table failed")
-            );
-            parms.debug.push({
-              detail: `${JSON.stringify(new_table)}`
-            });
-          }
+        if (new_table.body) {
+          console.log("new table created");
         } else {
-          console.error(new_sheet);
+          console.log(new_table);
           parms.errors.push(
-            utils.error(new_sheet.errors, "create new table failed")
+            utils.error(new_table.errors, "create new table failed")
           );
           parms.debug.push({
-            detail: `${JSON.stringify(new_sheet)}`
+            detail: `${JSON.stringify(new_table)}`
           });
-          parms.errors.push(new_sheet);
         }
+      } else {
+        console.error(new_sheet);
+        parms.errors.push(
+          utils.error(new_sheet.errors, "create new table failed")
+        );
+        parms.debug.push({
+          detail: `${JSON.stringify(new_sheet)}`
+        });
+        parms.errors.push(new_sheet);
       }
+    }
     // } 
     // else {
     //     parms.errors.push(...sheet_list.errors);
     // }
 
     //write to that sheet
-    console.log("write to new table");
+    console.log("writing to table");
+    let writeRows = await sheets.createRows(
+      accessToken,
+      excel_drive_item_id,
+      current_table_name,
+      rowDataArray
+    )
   }
 }
 
