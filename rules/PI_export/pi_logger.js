@@ -6,7 +6,7 @@ const pi_rule = require("./pi_rule.json");
 
 const body_compare = require("../comparers/body_compare.js");
 const from_compare = require("../comparers/from_compare.js");
-
+const excel_utils = require("../../helpers/excel_helper");
 // getMails();
 
 
@@ -41,15 +41,31 @@ function getMails(cookies) {
 }
 
 function compare_PI_rule(messages) {
+  let PI_rows = [];
   messages.map(message => {
     let sender = message.from.emailAddress.address;
     let from = from_compare.compare_senders(sender, pi_rule.from) >= 0 ? true : false;
     let body = body_compare.compare_body(message.uniqueBody.content, pi_rule.body);
     if (from && body) {
       console.log('found a taken care message');
-      logPI(message);
+      PI_row = logPI(message);
+      PI_rows.push([
+        PI_row.issue_resolver,
+        PI_row.issue_aplication,
+        PI_row.issue_blank_col1,
+        PI_row.issue_blank_col2,
+        PI_row.issue_subject,
+        PI_row.issue_dateTime,
+        PI_row.issue_body,
+        PI_row.issue_rootCause,
+        PI_row.issue_resolution,
+        PI_row.issue_recDate,
+        PI_row.issue_respDate,
+        PI_row.issue_resolvedDate
+      ])
     }
   });
+  return PI_rows;
 }
 
 
@@ -57,6 +73,7 @@ function logPI(message) {
   let PI_row = pi_exporter.getPIRow(message);
   //   parms.body.PI_rows.push(PI_row);
   console.log(PI_row);
+  return PI_row;
 }
 
 async function log_process(req) {
@@ -71,7 +88,9 @@ async function log_process(req) {
   console.log(count);
   console.log(' Searching for PIs');
 
-  compare_PI_rule(messages);
+  let PI_rows = compare_PI_rule(messages);
+
+  let loggedPI_rows = excel_utils.log_PI_to_excel(req, PI_rows);
 }
 
 exports.log_process = log_process;
