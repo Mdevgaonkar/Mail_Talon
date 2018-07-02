@@ -89,12 +89,13 @@ async function log_PI_to_excel(req, PI_rows) {
 
     //write to that sheet
     console.log("writing to table");
-    let writeRows = await sheets.createRows(
+    // PI_rows.length > 0 ?
+    return await sheets.createRows(
       accessToken,
       excel_drive_item_id,
       current_table_name,
-      rowDataArray
-    )
+      PI_rows)
+    // : console.log('0 PIs in this scan');
   }
 }
 
