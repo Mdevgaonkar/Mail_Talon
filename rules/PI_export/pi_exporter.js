@@ -92,7 +92,8 @@ function formatDate(date_string) {
     DtTime.toLocaleString("en-US", {
       hour: "numeric",
       minute: "numeric",
-      hour12: true
+      hour12: true,
+      timeZone: "Asia/Kolkata"
     });
   return formated_DtTime;
 }

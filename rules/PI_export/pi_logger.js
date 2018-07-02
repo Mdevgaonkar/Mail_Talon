@@ -47,7 +47,6 @@ function compare_PI_rule(messages) {
     let from = from_compare.compare_senders(sender, pi_rule.from) >= 0 ? true : false;
     let body = body_compare.compare_body(message.uniqueBody.content, pi_rule.body);
     if (from && body) {
-      console.log('found a taken care message');
       PI_row = logPI(message);
       PI_rows.push([
         PI_row.issue_resolver,
@@ -65,6 +64,7 @@ function compare_PI_rule(messages) {
       ])
     }
   });
+  console.log(`found ${PI_rows.length} taken care message/s`);
   return PI_rows;
 }
 
@@ -90,7 +90,9 @@ async function log_process(req) {
 
   let PI_rows = compare_PI_rule(messages);
 
-  let loggedPI_rows = excel_utils.log_PI_to_excel(req, PI_rows);
+  let loggedPI_rows = PI_rows.length > 0 ? excel_utils.log_PI_to_excel(req, PI_rows) : false;
+
+
 }
 
 exports.log_process = log_process;
