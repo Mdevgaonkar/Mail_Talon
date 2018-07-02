@@ -24,7 +24,8 @@ router.get('/', async function (req, res, next) {
         var getMailsURL = getUnreadMailsURL(req.cookies.lastChecked);
         request
             .get({
-                uri: getMailsURL, // proxy: process.env.proxyURL, 
+                uri: getMailsURL,
+                proxy: process.env.proxyURL != 'null' ? process.env.proxyURL : null,
                 headers: {
                     'Authorization': 'Bearer ' + accessToken
                 }
