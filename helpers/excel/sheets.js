@@ -183,10 +183,10 @@ function createRows(accessToken, excel_drive_item_id, table_name, rowDataArray) 
       (err, results, body) => {
         utils.handleResponse(err, results, body, parms, (parms, body) => {
           if (parms.body.indexOf("succeeded")) {
-            console.log(body.values);
-            console.log(rowDataArray);
+            // console.log(body.values);
+            // console.log(rowDataArray);
 
-            if (body.values[0] === rowDataArray[0]) {
+            if (body.values[0][0] === rowDataArray[0][0]) {
               parms.body = true;
             }
           } else {
