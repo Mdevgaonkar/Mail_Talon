@@ -93,7 +93,7 @@ function formatDate(date_string) {
       hour: "numeric",
       minute: "numeric",
       hour12: true,
-      timeZone: "Asia/Kolkata"
+      timeZone: "America/Havana"
     });
   return formated_DtTime;
 }
