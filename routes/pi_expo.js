@@ -18,7 +18,8 @@ router.get("/", async (req, res, next) => {
     errors: [],
     debug: [],
     body: {
-      message: ""
+      message: "",
+      logStatus:false
     }
   };
 
@@ -29,17 +30,26 @@ router.get("/", async (req, res, next) => {
     parms.auth = true;
     parms.body.message = "Starting PI logger process";
     let loggedPIs = await pi_logger.log_process(req);
+    loggedPIs == -1 ? 
+    {logStatus, message} = {logStatus:true,messsge:"NO new Prod issue found"} 
+    :loggedPIs == 0 ?
+    {logStatus, message} = {logStatus:false,messsge:"Failed"} 
+    :{logStatus, message} = {logStatus:true,messsge:"Prod issue found and logged"} 
 
+    parms.body.logStatus = logStatus;
+    parms.body.message = message;
+    res.send(parms);
   } else {
     // Redirect to home
     res.redirect("/");
   }
 
-  res.send(parms);
-  // setInterval(() => {
+  
 
-  // excel_utils.log_PI_to_excel(req);
-  // }, 1000 * 20 * 1); //1000 * 60 * 2
+  // setInterval(() => {
+  //   pi_logger.log_process(req)
+  // // excel_utils.log_PI_to_excel(req);
+  // }, 1000 * 40 * 1); //1000 * 60 * 2
 });
 
 module.exports = router;
