@@ -31,7 +31,7 @@ async function getTokenFromCode(auth_code, res) {
   const token = oauth2.accessToken.create(result);
   // console.log('Token created: ', token.token);
 
-  saveValuesToCookie(token, res);
+  if(res !== undefined) saveValuesToCookie(token, res);
 
   return token.token.access_token;
 }
@@ -58,7 +58,7 @@ async function getAccessToken(cookies, res) {
     const newToken = await oauth2.accessToken.create({
       refresh_token: refresh_token
     }).refresh();
-    saveValuesToCookie(newToken, res);
+    if(res !== undefined) saveValuesToCookie(newToken, res);
     return newToken.token.access_token;
   }
 
