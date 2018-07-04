@@ -90,7 +90,9 @@ async function log_process(req) {
 
   let PI_rows = compare_PI_rule(messages);
 
-  let loggedPI_rows = PI_rows.length > 0 ? excel_utils.log_PI_to_excel(req, PI_rows) : false;
+  let loggedPI_rows = PI_rows.length > 0 ? excel_utils.log_PI_to_excel(req, PI_rows) ? 1 : 0 : -1;
+
+  return loggedPI_rows;
 
 
 }
