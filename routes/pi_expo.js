@@ -30,14 +30,7 @@ router.get("/", async (req, res, next) => {
     parms.auth = true;
     parms.body.message = "Starting PI logger process";
     let loggedPIs = await pi_logger.log_process(req);
-    loggedPIs == -1 ? 
-    {logStatus, message} = {logStatus:true,messsge:"NO new Prod issue found"} 
-    :loggedPIs == 0 ?
-    {logStatus, message} = {logStatus:false,messsge:"Failed"} 
-    :{logStatus, message} = {logStatus:true,messsge:"Prod issue found and logged"} 
-
-    parms.body.logStatus = logStatus;
-    parms.body.message = message;
+    parms.body = {...loggedPIs};
     res.send(parms);
   } else {
     // Redirect to home

@@ -92,7 +92,12 @@ async function log_process(req) {
 
   let loggedPI_rows = PI_rows.length > 0 ? excel_utils.log_PI_to_excel(req, PI_rows) ? 1 : 0 : -1;
 
-  return loggedPI_rows;
+  // return loggedPI_rows;
+  return {
+    log_status: loggedPI_rows,
+    message: loggedPI_rows == -1 ? "NO new Prod issue found" : loggedPI_rows == 0 ? "Failed" : "Prod issue found and logged",
+    lastChecked : loggedPI_rows == 1 ? lastChecked :  req.cookies.lastChecked 
+  }
 
 
 }
