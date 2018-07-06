@@ -94,7 +94,7 @@ async function log_process(req) {
 
   // return loggedPI_rows;
   return {
-    log_status: loggedPI_rows,
+    log_status: loggedPI_rows == 0 ? false : true,
     message: loggedPI_rows == -1 ? "NO new Prod issue found" : loggedPI_rows == 0 ? "Failed" : "Prod issue found and logged",
     lastChecked : loggedPI_rows == 1 ? lastChecked :  req.cookies.lastChecked 
   }
