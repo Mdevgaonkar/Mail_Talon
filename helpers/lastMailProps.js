@@ -1,10 +1,10 @@
 const fs = require('fs');
 const lastTimestamp_Fl = __dirname + '/../rules/LastMailTime.json';
 
-function saveLastMailPropsToCookies(message, res) {
+function saveLastMailPropsToCookies(lastReceivedDateTime, res) {
 
     // Save the receivedDateTime + 1s in a cookie
-    let latestReceivedDateTime = new Date(message.receivedDateTime);
+    let latestReceivedDateTime = new Date(lastReceivedDateTime);
     latestReceivedDateTime.setSeconds(latestReceivedDateTime.getSeconds() + 1);
     fs.writeFileSync(lastTimestamp_Fl, latestReceivedDateTime.toISOString());
     res.cookie('lastChecked', latestReceivedDateTime.toISOString(), {
