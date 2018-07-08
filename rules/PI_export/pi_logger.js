@@ -7,6 +7,7 @@ const pi_rule = require("./pi_rule.json");
 const body_compare = require("../comparers/body_compare.js");
 const from_compare = require("../comparers/from_compare.js");
 const excel_utils = require("../../helpers/excel_helper");
+const savedMailProps = require("../../helpers/lastMailProps");
 // getMails();
 
 
@@ -76,7 +77,7 @@ function logPI(message) {
   return PI_row;
 }
 
-async function log_process(req) {
+async function log_process(req, res) {
   console.log('Getting new mails');
   let {
     lastChecked,
@@ -91,7 +92,7 @@ async function log_process(req) {
   let PI_rows = compare_PI_rule(messages);
 
   let loggedPI_rows = PI_rows.length > 0 ? excel_utils.log_PI_to_excel(req, PI_rows) ? 1 : 0 : -1;
-
+  savedMailProps.saveLastMailPropsToCookies(lastChecked, res);
   // return loggedPI_rows;
   return {
     log_status: loggedPI_rows == 0 ? false : true,
