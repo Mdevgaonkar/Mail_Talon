@@ -29,7 +29,7 @@ router.get("/", async (req, res, next) => {
     // parms.user = userName;
     parms.auth = true;
     parms.body.message = "Starting PI logger process";
-    let loggedPIs = await pi_logger.log_process(req);
+    let loggedPIs = await pi_logger.log_process(req,res);
     parms.body = {...loggedPIs};
     res.send(parms);
   } else {
