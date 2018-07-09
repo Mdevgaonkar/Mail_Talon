@@ -35,7 +35,7 @@ router.get('/', async function (req, res, next) {
                         parms.body = formatBody(body);
                         if (typeof parms.body == 'object' && ('messages' in parms.body) && (parms.body.messages.length > 0)) {
                             parms.body.lastChecked = parms.body.messages[0].receivedDateTime;
-                            savedMailProps.saveLastMailPropsToCookies(parms.body.messages[0], res);
+                            savedMailProps.saveLastMailPropsToCookies(parms.body.lastChecked, res);
                         }
                     }
                     res.send(parms);
