@@ -10,7 +10,7 @@ require('dotenv').config();
 var index = require('./routes/index');
 var authorize = require('./routes/authorize');
 //for urls like http://localhost:3000/authorize?code=M179b25f8-2481-1aa5-7b73-8263eaebfd61
-// var mail = require('./routes/mail');
+var mail = require('./routes/mail');
 var run_comp = require('./routes/run_comparator');
 var getUnreadMails = require('./routes/getUnreadMails');
 var piexpo = require('./routes/pi_expo');
@@ -46,7 +46,7 @@ app.use(function (req, res, next) {
 });
 app.use('/', index);
 app.use('/authorize', authorize);
-// app.use('/mail', mail);
+app.use('/mails', mail);
 app.use('/compare', run_comp);
 app.use('/getUnreadMails', getUnreadMails);
 app.use('/piexpo', piexpo);
