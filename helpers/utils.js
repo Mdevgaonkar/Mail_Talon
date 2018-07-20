@@ -94,6 +94,24 @@ const handleResponse = (err, results, body, parms, done) => {
   }
 };
 
+
+function formatDate(date_string) {
+  const DtTime = new Date(date_string);
+  let formated_DtTime =
+    (DtTime.getMonth()+1) + "/" + DtTime.getDate() + "/" + DtTime.getFullYear();
+  formated_DtTime =
+    formated_DtTime +
+    " " +
+    DtTime.toLocaleString("en-US", {
+      hour: "numeric",
+      minute: "numeric",
+      hour12: true,
+      timeZone: "America/Havana"
+    });
+  return formated_DtTime;
+}
+
 exports.error = formErrorObj;
 exports.formatMessage = formatMessage;
 exports.handleResponse = handleResponse;
+exports.formatDate = formatDate;
