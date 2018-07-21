@@ -34,8 +34,11 @@ router.get('/', async function (req, res, next) {
                     if (parms.body.indexOf('succeeded')) {
                         parms.body = formatBody(body);
                         if (typeof parms.body == 'object' && ('messages' in parms.body) && (parms.body.messages.length > 0)) {
-                            parms.body.lastChecked = parms.body.messages[0].receivedDateTime;
-                            savedMailProps.saveLastMailPropsToCookies(parms.body.lastChecked, res);
+                            let max_index = parms.body.messages.length-1;
+                            parms.body.lastChecked = parms.body.messages[max_index].receivedDateTime;
+                            // savedMailProps.saveLastMailPropsToCookies(parms.body.lastChecked, res);
+                        }else{
+                            parms.body.lastChecked = req.cookies.lastChecked;
                         }
                     }
                     res.send(parms);
@@ -57,9 +60,9 @@ const getUnreadMailsURL = (latestreceivedDateTime) => {
     // }
 
     if (latestreceivedDateTime != null) {
-        return encodeURI('https://graph.microsoft.com/v1.0/me/messages?$count=true&$select=receivedDateTime,subject,isRead,from,ccRecipients,body,bodyPreview,uniqueBody,importance&$filter=isRead eq false and receivedDateTime gt ' + latestreceivedDateTime + '&$orderby=receivedDateTime DESC');
+        return encodeURI('https://graph.microsoft.com/v1.0/me/messages?$count=true&$select=receivedDateTime,subject,isRead,from,ccRecipients,body,bodyPreview,uniqueBody,importance&$filter=isRead eq false and receivedDateTime gt ' + latestreceivedDateTime + '&$orderby=receivedDateTime');
     } else {
-        return encodeURI('https://graph.microsoft.com/v1.0/me/messages?$count=true&$select=receivedDateTime,subject,isRead,from,ccRecipients,body,bodyPreview,uniqueBody,importance&$filter=isRead eq false&$orderby=receivedDateTime DESC');
+        return encodeURI('https://graph.microsoft.com/v1.0/me/messages?$count=true&$select=receivedDateTime,subject,isRead,from,ccRecipients,body,bodyPreview,uniqueBody,importance&$filter=isRead eq false&$orderby=receivedDateTime');
     }
 }
 
