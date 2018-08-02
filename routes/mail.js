@@ -1,58 +1,57 @@
-var express = require('express');
-var router = express.Router();
-var authHelper = require('../helpers/auth');
-
 const request = require('request');
+const express = require('express');
+const router = express.Router();
+const utils = require('../helpers/utils');
+const authHelper = require('../helpers/auth');
+const savedMailProps = require('../helpers/lastMailProps');
+const fs = require('fs');
+const lastTimestamp_Fl = __dirname + '/../rules/LastMailTime.json';
+const getUnreadMails = require('../helpers/mail/getMails');
+
 
 /* GET /mail */
 router.get('/', async function (req, res, next) {
-  let parms = {
-    title: 'Inbox',
-    active: {
-      inbox: true
-    }
-  };
+  res.setHeader('Content-Type', 'application/json');
+    let parms = {
+        module: 'getUnreadMails_module',
+        auth: false,
+        errors: [],
+        debug: []
+    };
 
-  const accessToken = await authHelper.getAccessToken(req.cookies, res);
-  const userName = req.cookies.graph_user_name;
+    const accessToken = await authHelper.getAccessToken(req.cookies, res);
+    if (accessToken) {
+        // parms.user = userName;
+        parms.auth = true;
+        var getMailsURL = getUnreadMailsURL(req.cookies.lastChecked);
 
-  if (accessToken && userName) {
-    parms.user = userName;
-    var getMailsURL = encodeURI('https://graph.microsoft.com/v1.0/me/mailfolders/inbox/messages?$select=subject,from,receivedDateTime,isRead&$filter=isRead eq false&$orderby=receivedDateTime DESC');
-    // console.log(getMailsURL);
-
-    request
-      .get({
-        uri: getMailsURL, // proxy:'http://proxy.server.com', 
-        headers: {
-          'Authorization': 'Bearer ' + accessToken
+        try {
+          const unreadMails = await getUnreadMails(accessToken,getMailsURL);
+          parms.body = unreadMails.body;  
+        } catch (error) {
+          parms.errors.push(utils.error(error,'getUnreadMails_rejectedPromise'));
+          console.log(error);
         }
-      }, (err, results, body) => {
-        //err-> if error occurs then will have some prop
-        //result-> provides raw result along with request
-        //body-> provide actual required info
-         console.log('statusCode:', results && results.statusCode);
-        //  console.log('Body:', body);
-        if (err) {
-          parms.message = 'Error retrieving messages';
-          parms.error = {
-            status: `${err.code}: ${err.message}`
-          };
-          parms.debug = JSON.stringify(err.body, null, 2);
-          res.render('error', parms);
-        } else {
-          parms.messages = JSON.parse(body).value;
-          // console.log(result);
-          // console.log(parms.messages);
-          // res.send(parms.messages);
-          res.render('mail', parms);
-        }
-      });
+        
+        res.send(parms);
 
   } else {
     // Redirect to home
     res.redirect('/');
   }
 });
+
+const getUnreadMailsURL = (latestreceivedDateTime) => {
+
+  // if (latestreceivedDateTime == null || latestreceivedDateTime == undefined) {
+  latestreceivedDateTime = fs.readFileSync(lastTimestamp_Fl, 'utf8');
+  // }
+
+  if (latestreceivedDateTime != null) {
+      return encodeURI('https://graph.microsoft.com/v1.0/me/messages?$count=true&$select=receivedDateTime,subject,isRead,from,ccRecipients,body,bodyPreview,uniqueBody,importance&$filter=isRead eq false and receivedDateTime gt ' + latestreceivedDateTime + '&$orderby=receivedDateTime');
+  } else {
+      return encodeURI('https://graph.microsoft.com/v1.0/me/messages?$count=true&$select=receivedDateTime,subject,isRead,from,ccRecipients,body,bodyPreview,uniqueBody,importance&$filter=isRead eq false&$orderby=receivedDateTime');
+  }
+}
 
 module.exports = router;
