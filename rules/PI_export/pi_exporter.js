@@ -1,4 +1,5 @@
 const body_compare = require("../comparers/body_compare.js");
+const utils = require("../../helpers/utils");
 
 function getPIRow(mail) {
   const mail_body = mail.body.content;
@@ -54,7 +55,7 @@ function getIssueRecvRespDate(clean_body_string) {
     splitted_string.length - 1
   ].split("\n")[0];
   const PI_recDtTime = new Date(issue_receivedDateTime);
-  const formated_PI_recDtTime = formatDate(PI_recDtTime);
+  const formated_PI_recDtTime = utils.formatDate(PI_recDtTime);
 
   // Response date 
   if (splitted_string.length > 2) {
@@ -62,7 +63,7 @@ function getIssueRecvRespDate(clean_body_string) {
       splitted_string.length - 2
     ].split("\n")[0];
     var PI_respDtTime = new Date(issue_responseDateTime);
-    var formated_PI_respDtTime = formatDate(PI_respDtTime);
+    var formated_PI_respDtTime = utils.formatDate(PI_respDtTime);
   } else {
     issue_responseDateTime = null;
     PI_respDtTime = null;
@@ -78,25 +79,11 @@ function getIssueRecvRespDate(clean_body_string) {
 
 function getIssueResolvedDate(receivedDateTime) {
   const resolvedDate = new Date(receivedDateTime);
-  const formated_resolvedDate = formatDate(resolvedDate);
+  const formated_resolvedDate = utils.formatDate(resolvedDate);
   return formated_resolvedDate;
 }
 
-function formatDate(date_string) {
-  const DtTime = new Date(date_string);
-  let formated_DtTime =
-    DtTime.getMonth() + "/" + DtTime.getDate() + "/" + DtTime.getFullYear();
-  formated_DtTime =
-    formated_DtTime +
-    " " +
-    DtTime.toLocaleString("en-US", {
-      hour: "numeric",
-      minute: "numeric",
-      hour12: true,
-      timeZone: "America/Havana"
-    });
-  return formated_DtTime;
-}
+
 
 
 exports.getPIRow = getPIRow;
