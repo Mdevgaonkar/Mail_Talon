@@ -1,5 +1,5 @@
 {
-  "rule_name": "test1",
+  "rule_name": "Prod_issue_logger",
   "from": [
     "Mayur.Devgaonkar@genworth.com",
     "Akshay.Ghatage@genworth.com",
@@ -7,12 +7,17 @@
     "dmayur57@outlook.com",
     "rupesh.nanaware@genworth.com",
     "imran.attar@genworth.com",
-    "ankita.agrawal@genworth.com"
+    "ankita.agrawal@genworth.com",
+    "amit.salvi@genworth.com"
   ],
   "body": {
     "text": "^(Taken care)",
     "condition": "match"
   },
-  "output_file": "",
-  "output_data": "match"
+  "output_file": {
+    "type":"excel_online",
+    "item_id":"01XW7VKJQ6IDEHA3BKCBBLH2RSYL74QING",
+    "sheet_id":"new Date().toLocaleString('en-us', {month: 'short'})+'_'+new Date().toLocaleString('en-us', {year: '2-digit'})",
+    "table_size":"A1:L2"
+  }
 }
