@@ -17,4 +17,4 @@ function compare_subject(message_subject, rule_subject) {
     }
 }
 
-exports.compare_subject = compare_subject;
+exports.compare = compare_subject;
