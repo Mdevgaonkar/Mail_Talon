@@ -1,5 +1,7 @@
 const fs = require('fs');
-const saveMailProps = require('../helpers/lastMailProps');
+const subject = require('../helpers/comparers/subject_compare');
+const sender = require('../helpers/comparers/from_compare');
+const body = require('../helpers/comparers/body_compare');
 
 var ruleList;
 var rules = [];
@@ -42,20 +44,25 @@ function getAllRules() {
 function applyRules(messages, done) {
     var result = {
         mail_count: 0,
-        match_count: 0
+        match_count: 0,
+        result: []
     };
 
-    // console.log(messages[0]);
-
-    saveMailProps.saveLastMailTime(messages[0].receivedDateTime);
 
     messages.forEach(message => {
         //loop over all rules and compare key params
         rules.forEach(rule => {
             //compare all keys
-            if (compare_subject(message.subject, rule.subject)) {
-                result.match_count++;
+            if (subject.compare(message.subject, rule.subject)) {
+                
             }
+            if (sender.compare(message.from.emailAddress.address, rule.from)) {
+                
+            }
+            if (body.compare(message.uniqueBody.content, rule.subject)) {
+                
+            }
+            
 
         });
         result.mail_count++;
