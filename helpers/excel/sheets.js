@@ -10,9 +10,10 @@ function getAllSheets(accessToken, excel_drive_item_id) {
   };
 
   return new Promise(resolve => {
-    request.get({
+    request.get(
+      {
         uri: `https://graph.microsoft.com/v1.0/me/drive/items/${excel_drive_item_id}/workbook/worksheets`,
-        proxy: process.env.proxyURL != 'null' ? process.env.proxyURL : null,
+        proxy: process.env.proxyURL != "null" ? process.env.proxyURL : null,
         headers: {
           Authorization: "Bearer " + accessToken
         }
@@ -27,9 +28,10 @@ function getAllSheets(accessToken, excel_drive_item_id) {
                 return sheet.name;
               });
             } else {
-              parms.errors.push(utils.error(body, "could not fetch sheet list"));
+              parms.errors.push(
+                utils.error(body, "could not fetch sheet list")
+              );
             }
-
           }
           resolve(parms);
         });
@@ -38,17 +40,121 @@ function getAllSheets(accessToken, excel_drive_item_id) {
   });
 }
 
-function createNewSheet(accessToken, excel_drive_item_id, sheetName) {
+async function getAllSheetsFromWorkbook(accessToken, excel_drive_item_path) {
+  let parms = {
+    module: "get_all_sheets",
+    errors: [],
+    debug: []
+  };
+  /**************Block that gets item Id from the path***********/
+  let workbook = await getWorkbookIDWithPath(
+    accessToken,
+    excel_drive_item_path
+  );
+  if ("body" in workbook && "workbook_ID" in workbook.body) {
+    var excel_drive_item_id = workbook.body.workbook_ID;
+  } else {
+    parms.errors.push(utils.error(body, "could not fetch workbook ID"));
+    return new Promise(resolve => {
+      resolve(parms);
+    });
+  }
+  /**************Block that gets item Id from the path***********/
+
+  return new Promise(resolve => {
+    request.get(
+      {
+        uri: `https://graph.microsoft.com/v1.0/me/drive/items/${excel_drive_item_id}/workbook/worksheets`,
+        proxy: process.env.proxyURL != "null" ? process.env.proxyURL : null,
+        headers: {
+          Authorization: "Bearer " + accessToken
+        }
+      },
+      (err, results, body) => {
+        utils.handleResponse(err, results, body, parms, (parms, body) => {
+          if (parms.body.indexOf("succeeded")) {
+            parms.body = {};
+            let sheets = body.value;
+            if (sheets != undefined || sheets != null) {
+              parms.body.sheets = sheets.map(sheet => {
+                return sheet.name;
+              });
+            } else {
+              parms.errors.push(
+                utils.error(body, "could not fetch sheet list")
+              );
+            }
+          }
+          resolve(parms);
+        });
+      }
+    );
+  });
+}
+
+async function getWorkbookIDWithPath(accessToken, excel_drive_item_path) {
+  let parms = {
+    module: "get_Workbook_ID_With_Path",
+    errors: [],
+    debug: []
+  };
+
+  return new Promise(resolve => {
+    request.get(
+      {
+        uri: encodeURI(
+          `https://graph.microsoft.com/v1.0/me/drive/root:${excel_drive_item_path}`
+        ),
+        proxy: process.env.proxyURL != "null" ? process.env.proxyURL : null,
+        headers: {
+          Authorization: "Bearer " + accessToken
+        }
+      },
+      (err, results, body) => {
+        utils.handleResponse(err, results, body, parms, (parms, body) => {
+          if (parms.body.indexOf("succeeded")) {
+            parms.body = {};
+            if ("id" in body) {
+              let workbook_ID = body.id;
+              parms.body.workbook_ID = workbook_ID;
+            } else {
+              parms.errors.push(utils.error(body, "could not fetch sheet ID"));
+            }
+          }
+          resolve(parms);
+        });
+      }
+    );
+  });
+}
+
+async function createNewSheet(accessToken, excel_drive_item_path, sheetName) {
   let parms = {
     module: "create_new_sheet",
     errors: [],
     debug: []
   };
 
+  /**************Block that gets item Id from the path***********/
+  let workbook = await getWorkbookIDWithPath(
+    accessToken,
+    excel_drive_item_path
+  );
+  if ("body" in workbook && "workbook_ID" in workbook.body) {
+    var excel_drive_item_id = workbook.body.workbook_ID;
+  } else {
+    parms.errors.push(utils.error(body, "could not fetch workbook ID"));
+    return new Promise(resolve => {
+      resolve(parms);
+    });
+  }
+  /**************Block that gets item Id from the path***********/
+
   return new Promise(resolve => {
-    request.post({
+    request.post(
+      {
         uri: `https://graph.microsoft.com/v1.0/me/drive/items/${excel_drive_item_id}/workbook/worksheets/add`,
-        proxy: process.env.proxyURL != 'null' ? process.env.proxyURL : null,
+        proxy: process.env.proxyURL != "null" ? process.env.proxyURL : null,
         headers: {
           Authorization: "Bearer " + accessToken,
           "Content-Type": "application/json"
@@ -74,9 +180,9 @@ function createNewSheet(accessToken, excel_drive_item_id, sheetName) {
   });
 }
 
-function createNewTable(
+async function createNewTable(
   accessToken,
-  excel_drive_item_id,
+  excel_drive_item_path,
   sheetName,
   tableName,
   address
@@ -87,10 +193,26 @@ function createNewTable(
     debug: []
   };
 
+  /**************Block that gets item Id from the path***********/
+  let workbook = await getWorkbookIDWithPath(
+    accessToken,
+    excel_drive_item_path
+  );
+  if ("body" in workbook && "workbook_ID" in workbook.body) {
+    var excel_drive_item_id = workbook.body.workbook_ID;
+  } else {
+    parms.errors.push(utils.error(body, "could not fetch workbook ID"));
+    return new Promise(resolve => {
+      resolve(parms);
+    });
+  }
+  /**************Block that gets item Id from the path***********/
+
   return new Promise(resolve => {
-    request.post({
+    request.post(
+      {
         uri: `https://graph.microsoft.com/v1.0/me/drive/items/${excel_drive_item_id}/workbook/tables/add`,
-        proxy: process.env.proxyURL != 'null' ? process.env.proxyURL : null,
+        proxy: process.env.proxyURL != "null" ? process.env.proxyURL : null,
         headers: {
           Authorization: "Bearer " + accessToken,
           "Content-Type": "application/json"
@@ -103,13 +225,19 @@ function createNewTable(
       (err, results, body) => {
         utils.handleResponse(err, results, body, parms, async (parms, body) => {
           if (parms.body.indexOf("succeeded")) {
-
-            let rename_table = await renameTable(accessToken, excel_drive_item_id, body.name, tableName);
+            let rename_table = await renameTable(
+              accessToken,
+              excel_drive_item_id,
+              body.name,
+              tableName
+            );
             if (rename_table.body) {
               parms.body = true;
             } else {
               parms.body = false;
-              parms.errors.push(utils.error(body, "could not rename new table"));
+              parms.errors.push(
+                utils.error(body, "could not rename new table")
+              );
             }
           } else {
             parms.body = false;
@@ -122,9 +250,9 @@ function createNewTable(
   });
 }
 
-function renameTable(
+async function renameTable(
   accessToken,
-  excel_drive_item_id,
+  excel_drive_item_path,
   oldTableIdName,
   newTableName
 ) {
@@ -134,10 +262,26 @@ function renameTable(
     debug: []
   };
 
+  /**************Block that gets item Id from the path***********/
+  let workbook = await getWorkbookIDWithPath(
+    accessToken,
+    excel_drive_item_path
+  );
+  if ("body" in workbook && "workbook_ID" in workbook.body) {
+    var excel_drive_item_id = workbook.body.workbook_ID;
+  } else {
+    parms.errors.push(utils.error(body, "could not fetch workbook ID"));
+    return new Promise(resolve => {
+      resolve(parms);
+    });
+  }
+  /**************Block that gets item Id from the path***********/
+
   return new Promise(resolve => {
-    request.patch({
+    request.patch(
+      {
         uri: `https://graph.microsoft.com/v1.0/me/drive/items/${excel_drive_item_id}/workbook/tables/${oldTableIdName}`,
-        proxy: process.env.proxyURL != 'null' ? process.env.proxyURL : null,
+        proxy: process.env.proxyURL != "null" ? process.env.proxyURL : null,
         headers: {
           Authorization: "Bearer " + accessToken,
           "Content-Type": "application/json"
@@ -161,17 +305,36 @@ function renameTable(
   });
 }
 
-function createRows(accessToken, excel_drive_item_id, table_name, rowDataArray) {
+async function createRows(
+  accessToken,
+  excel_drive_item_path,
+  table_name,
+  rowDataArray
+) {
   let parms = {
     module: "create_new_sheet",
     errors: [],
     debug: []
   };
-
+  /**************Block that gets item Id from the path***********/
+  let workbook = await getWorkbookIDWithPath(
+    accessToken,
+    excel_drive_item_path
+  );
+  if ("body" in workbook && "workbook_ID" in workbook.body) {
+    var excel_drive_item_id = workbook.body.workbook_ID;
+  } else {
+    parms.errors.push(utils.error(body, "could not fetch workbook ID"));
+    return new Promise(resolve => {
+      resolve(parms);
+    });
+  }
+  /**************Block that gets item Id from the path***********/
   return new Promise(resolve => {
-    request.post({
+    request.post(
+      {
         uri: `https://graph.microsoft.com/v1.0/me/drive/items/${excel_drive_item_id}/workbook/tables/Table_${table_name}/rows/add`,
-        proxy: process.env.proxyURL != 'null' ? process.env.proxyURL : null,
+        proxy: process.env.proxyURL != "null" ? process.env.proxyURL : null,
         headers: {
           Authorization: "Bearer " + accessToken,
           "Content-Type": "application/json"
@@ -185,13 +348,27 @@ function createRows(accessToken, excel_drive_item_id, table_name, rowDataArray) 
           if (parms.body.indexOf("succeeded")) {
             // console.log(body.values);
             // console.log(rowDataArray);
-
-            if (body.values[0][0] === rowDataArray[0][0]) {
-              parms.body = true;
+            if (
+              "values" in body &&
+              typeof body.values === "object" &&
+              body.values instanceof Array
+            ) {
+              if (body.values[0][0] === rowDataArray[0][0]) {
+                parms.body = true;
+              }
+            } else {
+              parms.body = false;
+              console.log("could not create new rows on sheet");
+              parms.errors.push(
+                utils.error(body, "could not create new rows on sheet")
+              );
             }
           } else {
             parms.body = false;
-            parms.errors.push(utils.error(body, "could not create new rows on sheet"));
+            console.log("could not create new rows on sheet");
+            parms.errors.push(
+              utils.error(body, "could not create new rows on sheet")
+            );
           }
           resolve(parms);
         });
@@ -200,8 +377,28 @@ function createRows(accessToken, excel_drive_item_id, table_name, rowDataArray) 
   });
 }
 
+
+function columnsToAddress(num_of_cols){
+
+  if(num_of_cols>=0 && num_of_cols<(26*26*26)){
+    if(num_of_cols<=26){
+      return 'A1:'+String.fromCharCode(64+num_of_cols)+'2';
+    }else if(num_of_cols<=702){
+      return 'A1:'+String.fromCharCode(64+(num_of_cols%26?num_of_cols/26:((num_of_cols/26)-1)))+String.fromCharCode(64+(num_of_cols%26?num_of_cols%26:26))+'2';
+    }
+    // else{
+    //   return 'A1:'+String.fromCharCode(64+(num_of_cols%676?num_of_cols/676:((num_of_cols/676)-1)))+String.fromCharCode(64+(num_of_cols%676?num_of_cols/676:((num_of_cols/676)-1)))+String.fromCharCode(64+(num_of_cols%26?num_of_cols%26:26))+'2';
+    // }
+  }else{
+    return 'A1:A1';
+  }
+  
+}
+
 exports.getAllSheets = getAllSheets;
+exports.getAllSheetsFromWorkbook = getAllSheetsFromWorkbook;
 exports.createNewSheet = createNewSheet;
 exports.createNewTable = createNewTable;
 exports.renameTable = renameTable;
 exports.createRows = createRows;
+exports.columnsToAddress = columnsToAddress;
