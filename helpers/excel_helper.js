@@ -5,6 +5,7 @@ const utils = require("./utils");
 
 // const excel_drive_item_id = 'F084686CF62DAC50!106';
 const excel_drive_item_id = "01XW7VKJQ6IDEHA3BKCBBLH2RSYL74QING";
+const excel_drive_item_path = "/PI_online.xlsx";
 
 async function log_PI_to_excel(req, PI_rows) {
   console.log("excel logging started");
@@ -22,9 +23,9 @@ async function log_PI_to_excel(req, PI_rows) {
   if (accessToken) {
     parms.auth = true;
     //get all sheet names
-    let sheet_list = await sheets.getAllSheets(
+    let sheet_list = await sheets.getAllSheetsFromWorkbook(
       accessToken,
-      excel_drive_item_id
+      excel_drive_item_path
     );
 
     //get current month and year (Oct-18) and see if it exists else create
@@ -46,7 +47,7 @@ async function log_PI_to_excel(req, PI_rows) {
 
       let new_sheet = await sheets.createNewSheet(
         accessToken,
-        excel_drive_item_id,
+        excel_drive_item_path,
         current_sheet_name
       );
       if (new_sheet.body) {
@@ -55,7 +56,7 @@ async function log_PI_to_excel(req, PI_rows) {
 
         let new_table = await sheets.createNewTable(
           accessToken,
-          excel_drive_item_id,
+          excel_drive_item_path,
           current_sheet_name,
           current_table_name,
           address
@@ -74,7 +75,7 @@ async function log_PI_to_excel(req, PI_rows) {
       } else {
         console.error(new_sheet);
         parms.errors.push(
-          utils.error(new_sheet.errors, "create new table failed")
+          utils.error(new_sheet.errors, "create new sheet failed")
         );
         parms.debug.push({
           detail: `${JSON.stringify(new_sheet)}`
@@ -82,7 +83,7 @@ async function log_PI_to_excel(req, PI_rows) {
         parms.errors.push(new_sheet);
       }
     }
-    // } 
+    // }
     // else {
     //     parms.errors.push(...sheet_list.errors);
     // }
@@ -92,13 +93,12 @@ async function log_PI_to_excel(req, PI_rows) {
     // PI_rows.length > 0 ?
     return await sheets.createRows(
       accessToken,
-      excel_drive_item_id,
+      excel_drive_item_path,
       current_table_name,
-      PI_rows)
+      PI_rows
+    );
     // : console.log('0 PIs in this scan');
   }
 }
-
-
 
 exports.log_PI_to_excel = log_PI_to_excel;
