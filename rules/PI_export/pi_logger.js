@@ -112,7 +112,7 @@ async function log_process(req, res) {
     mails.body.lastChecked == null
       ? req.cookies.lastChecked
       : mails.body.lastChecked;
-  let count = mails.body.count;
+  let count = mails.body.messages.length;
   let messages = mails.body.messages;
   console.log(utils.formatDate(lastChecked));
   console.log(count);
