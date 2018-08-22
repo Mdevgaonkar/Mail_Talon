@@ -8,16 +8,24 @@
     "rupesh.nanaware@genworth.com",
     "imran.attar@genworth.com",
     "ankita.agrawal@genworth.com",
-    "amit.salvi@genworth.com"
+    "amit.salvi@genworth.com",
+    "vijay.patil@genworth.com"
   ],
   "body": {
     "text": "^(Taken care)",
     "condition": "match"
   },
-  "output_file": {
-    "type":"excel_online",
-    "item_id":"01XW7VKJQ6IDEHA3BKCBBLH2RSYL74QING",
-    "sheet_id":"new Date().toLocaleString('en-us', {month: 'short'})+'_'+new Date().toLocaleString('en-us', {year: '2-digit'})",
-    "table_size":"A1:L2"
+  "action": {
+    "type": "excel_add_row",
+    "excel_path": "/PI_online.xlsx",
+    "sheet_name": {
+      "eval": true,
+      "name": "new Date().toLocaleString('en-us', {month: 'short'})+'_'+new Date().toLocaleString('en-us', {year: '2-digit'})"
+    },
+    "table_name": {
+      "eval": true,
+      "name": "new Date().toLocaleString('en-us', {month: 'short'})+'_'+new Date().toLocaleString('en-us', {year: '2-digit'})"
+    },
+    "num_of_cols":12
   }
 }
