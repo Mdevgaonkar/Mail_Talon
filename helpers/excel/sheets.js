@@ -378,17 +378,21 @@ async function createRows(
 }
 
 
-function columnsToAddress(num_of_cols){
+function columnsToAddress(columnNumber){
 
-  if(num_of_cols>=0 && num_of_cols<(26*26*26)){
-    if(num_of_cols<=26){
-      return 'A1:'+String.fromCharCode(64+num_of_cols)+'2';
-    }else if(num_of_cols<=702){
-      return 'A1:'+String.fromCharCode(64+(num_of_cols%26?num_of_cols/26:((num_of_cols/26)-1)))+String.fromCharCode(64+(num_of_cols%26?num_of_cols%26:26))+'2';
-    }
-    // else{
-    //   return 'A1:'+String.fromCharCode(64+(num_of_cols%676?num_of_cols/676:((num_of_cols/676)-1)))+String.fromCharCode(64+(num_of_cols%676?num_of_cols/676:((num_of_cols/676)-1)))+String.fromCharCode(64+(num_of_cols%26?num_of_cols%26:26))+'2';
-    // }
+  if(columnNumber>0 && columnNumber<(26*26*26)){
+    var dividend = columnNumber
+    var columnName = ''
+    var modulo
+
+    while (dividend > 0)
+    {
+        modulo = (dividend - 1) % 26
+        columnName = String.fromCharCode(65 + modulo) + columnName
+        dividend = Math.floor((dividend - modulo) / 26)
+    } 
+
+    return 'A1:'+columnName+'2';
   }else{
     return 'A1:A1';
   }
