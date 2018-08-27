@@ -227,7 +227,7 @@ async function createNewTable(
           if (parms.body.indexOf("succeeded")) {
             let rename_table = await renameTable(
               accessToken,
-              excel_drive_item_id,
+              excel_drive_item_path,
               body.name,
               tableName
             );
