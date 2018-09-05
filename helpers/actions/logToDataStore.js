@@ -81,6 +81,15 @@ let message = {
   }
 };
 
-function logToDS(message, action) {}
+function logToDS(message, action) {
+  action.sub_sections.forEach(sub_section => {
+    if(sub_section.action == ('add') || sub_section.action == ('update') ){
+      ds.updateDataStore(action.data_store,sub_section.name,sub_section.value);
+    }else if (sub_section.action == ('del')) {
+      ds.deleteFromDataStore(action.data_store,sub_section.name);
+    }
+    
+  });
+}
 
 exports.logToDS = logToDS;
